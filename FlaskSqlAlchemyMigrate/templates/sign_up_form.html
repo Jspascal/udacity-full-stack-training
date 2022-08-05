@@ -57,6 +57,9 @@
                     const successMessage= document.createElement('SPAN');
                     successMessage.innerHTML = jsonResponse['username'];
                     document.getElementById('reply').appendChild(successMessage);
+		    localStorage.setItem("username", jsonResponse['username']);
+		    window.location.href = "{{ url_for('show_home') }}"
+		    
                 })
                 .catch(function() {
                     const failMessage= document.createElement('SPAN');

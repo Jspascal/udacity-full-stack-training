@@ -34,6 +34,10 @@ class Post(db.Model):
     def __repr__(self):
         return f'<Post Id : {self.id}, Title : {self.title}>'
 
+@app.route('/', methods=['GET'])
+def show_home():
+    return render_template('homepage.html')
+
 @app.route('/signup', methods=['GET'])
 def show_signup():
     return render_template('sign_up_form.html')
