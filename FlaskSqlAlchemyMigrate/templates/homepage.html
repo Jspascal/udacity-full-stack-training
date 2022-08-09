@@ -22,9 +22,9 @@
         </div>
       </nav>
     <!--Navbar End-->
-      <form>
-	  <input type="text" class="default-input" placeholder="Title" />
-	  <textarea placeholder="Write your post" class="default-input"></textarea>
+      <form id="form">
+	  <input id="title" type="text" class="default-input" placeholder="Title" />
+	  <textarea id="content" placeholder="Write your post" class="default-input"></textarea>
           <input class="btn blue float-right" type="submit" value="Post it!">
       </form>
 	<div class="boxlist">
@@ -55,6 +55,52 @@
     <!--Main End-->
 
       <script>
+        fetch('/post/get', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+        })
+          .then(function(response) {
+              return response.json()
+          })
+          .then(function(jsonResponse) {
+              console.log(jsonResponse)
+          })
+          .catch(function() {
+            console.log('Echec de chargement')
+          })
+
+        const titleInput = document.getElementById('title');
+        const contentInput = document.getElementById('content');
+
+        document.getElementById('form').onsubmit = function(e) {
+            e.preventDefault();
+            const title = titleInput.value;
+            const content = contentInput.value;
+            fetch('/post/create', {
+                method: 'POST',
+                body: JSON.stringify({
+                    'title': title,
+                    'content': content,
+                }),
+                headers: {
+                'Content-Type': 'application/json',
+                }
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(jsonResponse) {
+    window.location.href = "{{ url_for('show_home') }}"
+    
+            })
+            .catch(function() {
+                
+            })
+
+            
+        }
         
       </script>
     

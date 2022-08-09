@@ -38,6 +38,37 @@ class Post(db.Model):
 def show_home():
     return render_template('homepage.html')
 
+@app.route('/post/get', methods=['GET'])
+def get_posts():
+    posts = Post.query.all()
+    return jsonify(posts)
+
+@app.route('/post/create', methods=['POST'])
+def create_post():
+    body = {}
+    error = False
+    try:
+        json_data = request.json
+        app.logger.info(json_data)
+        title = json_data['title']
+        content = json_data['content']
+        post = Post(title=title, content=content)
+        db.session.add(post)
+        db.session.commit()
+    except:
+        error=True
+        db.session.rollback()
+        print(sys.exc_info())
+    finally:
+        db.session.close()
+        if error == True:
+            abort(400)
+        else:
+            body['success'] = True
+            return jsonify(body)
+
+#Auth controller Start
+
 @app.route('/signup', methods=['GET'])
 def show_signup():
     return render_template('sign_up_form.html')
@@ -70,5 +101,37 @@ def submit_signup():
             body['success'] = True
             return jsonify(body)
 
+@app.route('/signin', methods=['GET'])
+def signin_form():
+    return render_template('sign_in_form.html')
+
+@app.route('/signin/submit', methods=['POST'])
+def signin_submit():
+    body = {}
+    error = False
+    try:
+        json_data = request.json
+        username = json_data['username']
+        app.logger.info(request.get_json('username'))
+        password = json_data['password']
+        app.logger.info(password)
+        user = session.query(User).filter_by(name=username).first()
+        if username == user.username and password == user.check_password(password):
+            #TODO
+    except:
+        error = True
+        print(sys.exc_info())
+
+    finally:
+        db.session.close()
+        if error == True:
+            abort(400)
+        else:
+            body['success'] = True
+            return jsonify(body)
+
+
+
+#Auth Controller End
 
 
